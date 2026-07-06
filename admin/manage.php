@@ -59,8 +59,14 @@ $matches = mysqli_query($conn, "SELECT
 <div class="container">
 
     <!-- Header -->
-    <div class="card" style="display:flex; justify-content:space-between; align-items:center; padding:15px 25px;">
-        <h2 style="margin:0;">⚙️ Manage All Records</h2>
+    <div class="card" style="display: flex; justify-content: space-between; align-items: center; padding: 20px 28px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 28px;">⚙️</span>
+            <div>
+                <h2 style="margin: 0; padding: 0; border: none; font-size: 20px; font-weight: 700;">Records Management Control Panel</h2>
+                <p style="color: var(--dark-muted); font-size: 13px; margin: 0;">Perform updates, approvals, and deletion logs</p>
+            </div>
+        </div>
         <a href="dashboard.php" class="btn btn-primary">← Back to Dashboard</a>
     </div>
 
@@ -72,53 +78,55 @@ $matches = mysqli_query($conn, "SELECT
             'match_approved'    => '✅ Match approved successfully.',
         ]; ?>
         <div class="alert alert-success">
-            <?= $msgs[$_GET['msg']] ?? 'Action completed.' ?>
+            <?= htmlspecialchars($msgs[$_GET['msg']] ?? 'Action completed.') ?>
         </div>
     <?php endif; ?>
 
     <!-- Manage Donors -->
     <div class="card">
-        <h2>🩸 All Donors</h2>
+        <h2>🩸 All Registered Donors</h2>
         <?php if (mysqli_num_rows($donors) > 0): ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Blood Group</th>
-                    <th>Health Status</th>
-                    <th>Email</th>
-                    <th>Contact</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $i = 1; while ($row = mysqli_fetch_assoc($donors)): ?>
-                <tr>
-                    <td><?= $i++ ?></td>
-                    <td><?= $row['full_name'] ?></td>
-                    <td><?= $row['age'] ?></td>
-                    <td><?= $row['blood_group'] ?></td>
-                    <td>
-                        <span class="badge <?= $row['health_status'] == 'Healthy' ? 'badge-matched' : 'badge-high' ?>">
-                            <?= $row['health_status'] ?>
-                        </span>
-                    </td>
-                    <td><?= $row['email'] ?></td>
-                    <td><?= $row['contact_number'] ?></td>
-                    <td>
-                        <a href="manage.php?delete_donor=<?= $row['donor_id'] ?>"
-                           class="btn btn-danger"
-                           onclick="return confirm('Delete this donor?')"
-                           style="padding:5px 12px; font-size:13px;">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Blood Group</th>
+                        <th>Health Status</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 1; while ($row = mysqli_fetch_assoc($donors)): ?>
+                    <tr>
+                        <td><strong><?= $i++ ?></strong></td>
+                        <td><?= htmlspecialchars($row['full_name']) ?></td>
+                        <td><?= htmlspecialchars($row['age']) ?> yrs</td>
+                        <td><span style="font-weight: 600; color: var(--primary);"><?= htmlspecialchars($row['blood_group']) ?></span></td>
+                        <td>
+                            <span class="badge <?= $row['health_status'] == 'Healthy' ? 'badge-matched' : 'badge-high' ?>">
+                                <?= htmlspecialchars($row['health_status']) ?>
+                            </span>
+                        </td>
+                        <td><?= htmlspecialchars($row['email']) ?></td>
+                        <td><?= htmlspecialchars($row['contact_number']) ?></td>
+                        <td>
+                            <a href="manage.php?delete_donor=<?= $row['donor_id'] ?>"
+                               class="btn btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this donor? This will also remove any compatibility matches.')"
+                               style="padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm);">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
         <div class="alert alert-error">No donors registered yet.</div>
         <?php endif; ?>
@@ -126,51 +134,53 @@ $matches = mysqli_query($conn, "SELECT
 
     <!-- Manage Recipients -->
     <div class="card">
-        <h2>🏨 All Recipients</h2>
+        <h2>🏨 All Registered Recipients</h2>
         <?php if (mysqli_num_rows($recipients) > 0): ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Blood Group</th>
-                    <th>Urgency</th>
-                    <th>Status</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $i = 1; while ($row = mysqli_fetch_assoc($recipients)): ?>
-                <tr>
-                    <td><?= $i++ ?></td>
-                    <td><?= $row['full_name'] ?></td>
-                    <td><?= $row['age'] ?></td>
-                    <td><?= $row['blood_group'] ?></td>
-                    <td>
-                        <span class="badge badge-<?= strtolower($row['urgency_level']) ?>">
-                            <?= $row['urgency_level'] ?>
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge badge-<?= strtolower($row['status']) ?>">
-                            <?= $row['status'] ?>
-                        </span>
-                    </td>
-                    <td><?= $row['email'] ?></td>
-                    <td>
-                        <a href="manage.php?delete_recipient=<?= $row['recipient_id'] ?>"
-                           class="btn btn-danger"
-                           onclick="return confirm('Delete this recipient?')"
-                           style="padding:5px 12px; font-size:13px;">
-                            Delete
-                        </a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Blood Group</th>
+                        <th>Urgency</th>
+                        <th>Status</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 1; while ($row = mysqli_fetch_assoc($recipients)): ?>
+                    <tr>
+                        <td><strong><?= $i++ ?></strong></td>
+                        <td><?= htmlspecialchars($row['full_name']) ?></td>
+                        <td><?= htmlspecialchars($row['age']) ?> yrs</td>
+                        <td><span style="font-weight: 600; color: var(--primary);"><?= htmlspecialchars($row['blood_group']) ?></span></td>
+                        <td>
+                            <span class="badge badge-<?= strtolower($row['urgency_level']) ?>">
+                                <?= htmlspecialchars($row['urgency_level']) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge badge-<?= strtolower($row['status']) ?>">
+                                <?= htmlspecialchars($row['status']) ?>
+                            </span>
+                        </td>
+                        <td><?= htmlspecialchars($row['email']) ?></td>
+                        <td>
+                            <a href="manage.php?delete_recipient=<?= $row['recipient_id'] ?>"
+                               class="btn btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this recipient? This will also remove them from the waiting list and delete compatibility matches.')"
+                               style="padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm);">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
         <div class="alert alert-error">No recipients registered yet.</div>
         <?php endif; ?>
@@ -178,56 +188,60 @@ $matches = mysqli_query($conn, "SELECT
 
     <!-- Manage Matches -->
     <div class="card">
-        <h2>🔗 All Matches</h2>
+        <h2>🔗 All Compatibility Matches</h2>
         <?php if (mysqli_num_rows($matches) > 0): ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Donor</th>
-                    <th>Recipient</th>
-                    <th>Blood Group</th>
-                    <th>Urgency</th>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $i = 1; while ($row = mysqli_fetch_assoc($matches)): ?>
-                <tr>
-                    <td><?= $i++ ?></td>
-                    <td><?= $row['donor_name'] ?></td>
-                    <td><?= $row['recipient_name'] ?></td>
-                    <td><?= $row['blood_group'] ?></td>
-                    <td>
-                        <span class="badge badge-<?= strtolower($row['urgency_level']) ?>">
-                            <?= $row['urgency_level'] ?>
-                        </span>
-                    </td>
-                    <td><?= date('Y-m-d', strtotime($row['match_date'])) ?></td>
-                    <td>
-                        <span class="badge badge-<?= strtolower($row['status']) ?>">
-                            <?= $row['status'] ?>
-                        </span>
-                    </td>
-                    <td>
-                        <?php if ($row['status'] == 'Pending'): ?>
-                        <a href="manage.php?approve_match=<?= $row['match_id'] ?>"
-                           class="btn btn-success"
-                           style="padding:5px 12px; font-size:13px;">
-                            Approve
-                        </a>
-                        <?php else: ?>
-                        <span style="color:#34a853; font-size:13px;">✅ Approved</span>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Donor</th>
+                        <th>Recipient</th>
+                        <th>Blood Group</th>
+                        <th>Urgency</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $i = 1; while ($row = mysqli_fetch_assoc($matches)): ?>
+                    <tr>
+                        <td><strong><?= $i++ ?></strong></td>
+                        <td><?= htmlspecialchars($row['donor_name']) ?></td>
+                        <td><?= htmlspecialchars($row['recipient_name']) ?></td>
+                        <td><span style="font-weight: 600; color: var(--primary);"><?= htmlspecialchars($row['blood_group']) ?></span></td>
+                        <td>
+                            <span class="badge badge-<?= strtolower($row['urgency_level']) ?>">
+                                <?= htmlspecialchars($row['urgency_level']) ?>
+                            </span>
+                        </td>
+                        <td><?= date('Y-m-d', strtotime($row['match_date'])) ?></td>
+                        <td>
+                            <span class="badge badge-<?= strtolower($row['status']) ?>">
+                                <?= htmlspecialchars($row['status']) ?>
+                            </span>
+                        </td>
+                        <td>
+                            <?php if ($row['status'] == 'Pending'): ?>
+                            <a href="manage.php?approve_match=<?= $row['match_id'] ?>"
+                               class="btn btn-success"
+                               style="padding: 6px 14px; font-size: 12px; border-radius: var(--radius-sm);">
+                                Approve Match
+                            </a>
+                            <?php else: ?>
+                            <span style="color: var(--success); font-weight: 600; font-size: 13px; display: inline-flex; align-items: center; gap: 4px;">
+                                ✅ Approved
+                            </span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+        </div>
         <?php else: ?>
-        <div class="alert alert-error">No matches found yet.</div>
+        <div class="alert alert-error">No matching operations logged.</div>
         <?php endif; ?>
     </div>
 

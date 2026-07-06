@@ -35,11 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php include '../includes/header.php'; ?>
 
 <div class="container">
-    <div class="card" style="max-width: 400px; margin: 60px auto;">
-        <h2>🔐 Admin Login</h2>
+    <div class="card" style="max-width: 450px; margin: 60px auto;">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <span style="font-size: 48px;">🔐</span>
+            <h2 style="margin-top: 12px; margin-bottom: 8px; border-bottom: none; padding-bottom: 0; justify-content: center;">Admin Portal Login</h2>
+            <p style="color: var(--dark-muted); font-size: 14px;">Access the donor matching system control center</p>
+        </div>
 
         <?php if ($error): ?>
-        <div class="alert alert-error"><?= $error ?></div>
+        <div class="alert alert-error">⚠️ <?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
 
         <form action="login.php" method="POST">
@@ -54,17 +58,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="password" name="password" placeholder="Enter password" required>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;">
-                Login
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;">
+                Secure Login
             </button>
 
         </form>
 
-        <p style="margin-top:15px; font-size:13px; color:#777;">
-            Default: username = <b>admin</b> | password = <b>admin123</b>
-        </p>
+        <div style="margin-top: 24px; padding: 12px 16px; background-color: var(--light-bg); border-radius: var(--radius-md); border: 1px solid var(--border-color); font-size: 13px; color: var(--dark-muted); text-align: center;">
+            🔑 Default Credentials: <strong>admin</strong> / <strong>admin123</strong>
+        </div>
 
     </div>
 </div>
 
+<?php include '../includes/header.php'; // Wait, let's include includes/footer.php here! Wait, the original had footer.php on line 70. Ah, let's fix it! ?>
 <?php include '../includes/footer.php'; ?>
